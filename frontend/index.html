@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan Deeper | Intelligent Group Travel Planner</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#0a0a0c',
+                            card: 'rgba(20, 20, 22, 0.7)',
+                            gold: '#d4af37',
+                            goldHover: '#f9d76c',
+                            textMuted: '#a0a0a0'
+                        }
+                    },
+                    fontFamily: {
+                        heading: ['Cormorant Garamond', 'serif'],
+                        sans: ['General Sans', 'sans-serif'],
+                        display: ['Clash Display', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=General+Sans:wght@400;500;600&family=Clash+Display:wght@500;600&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-brand-dark text-white font-sans antialiased overflow-x-hidden">
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass-nav px-8 py-4 flex justify-between items-center">
+        <div class="font-heading text-2xl font-bold tracking-widest text-brand-gold uppercase">Plan Deeper</div>
+        <div id="nav-user-info" class="text-sm font-medium tracking-wide"></div>
+    </nav>
+
+    <!-- Main Container (Views injected here) -->
+    <main id="app-container" class="min-h-screen"></main>
+
+    <!-- View Templates -->
+    
+    <!-- Landing / Join View -->
+    <template id="view-landing">
+        <section class="relative h-screen flex items-center justify-center overflow-hidden">
+            <div class="absolute inset-0 z-0">
+                <img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2074&auto=format&fit=crop" class="w-full h-full object-cover opacity-40 scale-105 cinematic-zoom">
+                <div class="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/80 to-transparent"></div>
+            </div>
+            
+            <div class="relative z-10 text-center max-w-3xl px-4 fade-in-up">
+                <h1 class="font-heading text-6xl md:text-8xl font-bold mb-6 tracking-tight">Discover the <br/><span class="text-brand-gold italic">Extraordinary</span></h1>
+                <p class="text-lg md:text-xl text-brand-textMuted font-light mb-12 tracking-wide leading-relaxed">The intelligent, collaborative travel concierge for your next group expedition. Pool budgets, discover breathtaking destinations, and vote together.</p>
+                
+                <div class="glass-card p-8 rounded-2xl max-w-md mx-auto">
+                    <h3 class="font-display text-2xl mb-6">Start Your Journey</h3>
+                    <input type="text" id="user-name" placeholder="Enter your name" class="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 mb-4 text-white focus:outline-none focus:border-brand-gold transition-colors">
+                    
+                    <button id="btn-create-group" class="w-full bg-brand-gold text-black font-semibold rounded-lg px-4 py-3 mb-4 hover:bg-brand-goldHover transition-colors uppercase tracking-wider text-sm">Create New Group</button>
+                    
+                    <div class="flex items-center my-4">
+                        <div class="flex-grow border-t border-white/10"></div>
+                        <span class="px-3 text-white/40 text-xs uppercase tracking-widest">or join existing</span>
+                        <div class="flex-grow border-t border-white/10"></div>
+                    </div>
+                    
+                    <div class="flex gap-2">
+                        <input type="text" id="group-code-input" placeholder="Group Code (e.g. LUX89)" class="w-2/3 bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-gold uppercase">
+                        <button id="btn-join-group" class="w-1/3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-lg px-4 py-3 transition-colors uppercase tracking-wider text-sm border border-white/10">Join</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </template>
+
+    <!-- Group Dashboard View -->
+    <template id="view-dashboard">
+        <section class="pt-32 pb-20 px-8 max-w-7xl mx-auto min-h-screen">
+            <div class="flex justify-between items-end mb-12 fade-in-up">
+                <div>
+                    <p class="text-brand-textMuted uppercase tracking-widest text-sm mb-2">Group Code: <span id="display-group-code" class="text-brand-gold font-bold"></span></p>
+                    <h1 class="font-heading text-5xl font-bold">Your Collaborative <span class="italic text-brand-gold">Itinerary</span></h1>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm text-brand-textMuted uppercase tracking-widest">Pooled Budget</p>
+                    <p class="font-display text-4xl text-brand-gold">$<span id="display-budget">0</span></p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Left Col: Preferences & Members -->
+                <div class="space-y-8 fade-in-up delay-100">
+                    <div class="glass-card p-6 rounded-2xl">
+                        <h3 class="font-display text-xl mb-4 border-b border-white/10 pb-4">Set Your Preferences</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-xs uppercase tracking-widest text-brand-textMuted block mb-2">Destination Vibe</label>
+                                <select id="pref-type" class="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-gold">
+                                    <option value="Beach">Beach & Coastal</option>
+                                    <option value="City">Metropolitan City</option>
+                                    <option value="Hill">Mountains & Hills</option>
+                                    <option value="Historical">Historical Ruins</option>
+                                    <option value="Adventure">Adventure & Sports</option>
+                                    <option value="Nature">Nature Reserve</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs uppercase tracking-widest text-brand-textMuted block mb-2">Your Budget ($)</label>
+                                <input type="number" id="pref-budget" value="1500" class="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-gold">
+                            </div>
+                            <button id="btn-save-pref" class="w-full bg-brand-gold text-black font-semibold rounded-lg px-4 py-3 hover:bg-brand-goldHover transition-colors uppercase tracking-wider text-sm mt-4">Update Profile</button>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-6 rounded-2xl">
+                        <h3 class="font-display text-xl mb-4 border-b border-white/10 pb-4">Travel Companions</h3>
+                        <div id="members-list" class="space-y-3">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Col: Recommendations & Voting -->
+                <div class="lg:col-span-2 space-y-8 fade-in-up delay-200">
+                    <!-- ADK Insights -->
+                    <div id="adk-insights" class="glass-card p-6 rounded-2xl border-l-4 border-brand-gold hidden">
+                        <h4 class="text-xs uppercase tracking-widest text-brand-gold mb-2">AI Concierge Insights</h4>
+                        <p id="adk-text" class="text-sm text-brand-textMuted italic"></p>
+                    </div>
+
+                    <div class="flex justify-between items-end border-b border-white/10 pb-4 mb-6">
+                        <h3 class="font-display text-2xl">Curated Recommendations</h3>
+                        <div id="host-actions" class="hidden">
+                            <button id="btn-generate" class="bg-brand-gold text-black font-bold uppercase tracking-widest text-xs px-6 py-2 rounded-full hover:bg-brand-goldHover transition-colors shadow-lg hover:shadow-brand-gold/20 flex items-center gap-2">
+                                <span>Generate Group Recommendations</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="recommendations-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Populated via JS -->
+                    </div>
+
+                    <h3 class="font-display text-2xl border-b border-white/10 pb-4 mt-12">Live Voting</h3>
+                    <div id="voting-section" class="glass-card p-6 rounded-2xl">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </template>
+
+    <!-- App Logic -->
+    <script src="app.js"></script>
+</body>
+</html>
